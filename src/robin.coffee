@@ -20,18 +20,17 @@ Robin = require('robin-js-sdk')
 
 robinToken = process.env.ROBIN_TOKEN
 robinOrg = process.env.ROBIN_ORGANIZATION
-console.log robinToken, robinOrg
+defaultLocation = process.env.ROBIN_LOCATION
 
 module.exports = (robot) ->
   robin = new Robin(robinToken)
   location = null
   robin.api.organizations.locations.get(robinOrg).then( (response) ->
     resp = response.getData()
-    location = resp[0].id
+    location = defaultRobinLocation || resp[0].id
   ).then( () ->
-    console.log location
-    robot.respond "/robinorg/i", (req, res) ->
-      msg.send "Active organization: " + robinOrg
+    robot.respond "/robinstatus/i", (res) ->
+      res.send "Active organization: " + robinOrg + ' @ location ' + defaultLocation
 
     robot.respond /rooms/, (res) ->
       console.log 'incoming request for rooms'
